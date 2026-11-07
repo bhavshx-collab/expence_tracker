@@ -76,7 +76,13 @@ h.1/
 
 1. Create a project at [supabase.com](https://supabase.com)
 2. Copy your Project URL and API keys to `.env`
-3. Run the SQL schema (coming soon)
+3. Run `supabase_schema.sql` in the Supabase SQL Editor.
+
+### Environment configuration
+
+Copy `.env.example` to `.env`, set a strong `JWT_SECRET`, and add `CORS_ORIGIN` when deploying the frontend on a different domain.
+
+Never expose `SUPABASE_SERVICE_KEY` in client-side code.
 
 By default, the app uses an **in-memory mock database** with pre-seeded demo data.
 To connect to Supabase instead, set `USE_MOCK_DB=false` in `.env` after running the schema.
@@ -95,3 +101,6 @@ To connect to Supabase instead, set `USE_MOCK_DB=false` in `.env` after running 
 ---
 
 *Built for AIML A9 Hackathon 2024*
+
+#CONTRIBUTORS:
+- Chinmay Musale

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A digital workflow for employees to submit and track business expenses",
   "main": "server/index.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server/index.js",
     "dev": "nodemon server/index.js"
