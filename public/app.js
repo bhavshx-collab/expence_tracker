@@ -664,6 +664,13 @@ async function loadAllExpenses() {
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const preview = document.getElementById('file-preview');
+  const maxFileSize = 5 * 1024 * 1024;
+  if (file && file.size > maxFileSize) {
+    event.target.value = '';
+    preview.classList.add('hidden');
+    toast('Receipt files must be 5 MB or smaller', 'warning');
+    return;
+  }
   if (file) {
     preview.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
     preview.classList.remove('hidden');
