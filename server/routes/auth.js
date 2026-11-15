@@ -125,7 +125,7 @@ router.post('/login', async (req, res) => {
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, department, role = 'employee' } = req.body;
+    const { name, email, password, department } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, and password are required' });
@@ -144,7 +144,8 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const avatar = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-    const safeRole = ['employee', 'manager', 'admin'].includes(role) ? role : 'employee';
+    // Public registration must never grant elevated permissions.
+    const safeRole = 'employee';
 
     const { data: user, error } = await supabase
       .from('users')
