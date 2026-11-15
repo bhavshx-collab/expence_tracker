@@ -26,6 +26,10 @@ const formatCurrency = (amount, currency = 'INR') => {
   }).format(amount);
 };
 
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+}[char]));
+
 const formatDate = (dateStr) => {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -549,14 +553,14 @@ function renderExpensesTable(containerId, expenses, options = {}) {
       ${showEmployee ? `<td>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="user-avatar sm" style="font-size:10px;">${(exp.user_name || 'U').split(' ').map(n=>n[0]).join('').substring(0,2)}</div>
-          <span>${exp.user_name || '—'}</span>
+          <span>${escapeHtml(exp.user_name || '—')}</span>
         </div>
       </td>` : ''}
       <td>
-        <div style="font-weight:600;color:var(--text-primary);">${exp.title}</div>
-        ${exp.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${exp.description.substring(0, 50)}${exp.description.length > 50 ? '...' : ''}</div>` : ''}
+        <div style="font-weight:600;color:var(--text-primary);">${escapeHtml(exp.title)}</div>
+        ${exp.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${escapeHtml(exp.description.substring(0, 50))}${exp.description.length > 50 ? '...' : ''}</div>` : ''}
       </td>
-      <td><span style="font-size:12px;background:var(--bg-elevated);padding:3px 8px;border-radius:6px;color:var(--text-secondary);">${exp.category}</span></td>
+      <td><span style="font-size:12px;background:var(--bg-elevated);padding:3px 8px;border-radius:6px;color:var(--text-secondary);">${escapeHtml(exp.category)}</span></td>
       <td class="amount-cell">${formatCurrency(exp.amount, exp.currency)}</td>
       <td>${formatDate(exp.date)}</td>
       <td>${statusBadge(exp.status)}</td>
