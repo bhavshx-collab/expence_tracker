@@ -719,11 +719,11 @@ async function openReviewModal(expenseId) {
       <div class="expense-detail-grid">
         <div class="detail-item">
           <span class="detail-label">Title</span>
-          <span class="detail-value">${exp.title}</span>
+          <span class="detail-value">${escapeHtml(exp.title)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Submitted By</span>
-          <span class="detail-value">${exp.user_name || '—'}</span>
+          <span class="detail-value">${escapeHtml(exp.user_name || '—')}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Amount</span>
@@ -731,7 +731,7 @@ async function openReviewModal(expenseId) {
         </div>
         <div class="detail-item">
           <span class="detail-label">Category</span>
-          <span class="detail-value">${exp.category}</span>
+          <span class="detail-value">${escapeHtml(exp.category)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Date</span>
@@ -745,7 +745,7 @@ async function openReviewModal(expenseId) {
       ${exp.description ? `
         <div class="detail-item">
           <span class="detail-label">Description</span>
-          <span class="detail-value" style="color:var(--text-secondary);">${exp.description}</span>
+          <span class="detail-value" style="color:var(--text-secondary);">${escapeHtml(exp.description)}</span>
         </div>` : ''}
     `;
     document.getElementById('review-comment').value = '';
@@ -787,7 +787,7 @@ async function viewExpenseDetails(expenseId) {
       <div class="expense-detail-grid">
         <div class="detail-item">
           <span class="detail-label">Title</span>
-          <span class="detail-value">${exp.title}</span>
+          <span class="detail-value">${escapeHtml(exp.title)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Status</span>
@@ -799,7 +799,7 @@ async function viewExpenseDetails(expenseId) {
         </div>
         <div class="detail-item">
           <span class="detail-label">Category</span>
-          <span class="detail-value">${exp.category}</span>
+          <span class="detail-value">${escapeHtml(exp.category)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Expense Date</span>
@@ -812,7 +812,7 @@ async function viewExpenseDetails(expenseId) {
         ${exp.user_name ? `
         <div class="detail-item">
           <span class="detail-label">Submitted By</span>
-          <span class="detail-value">${exp.user_name}</span>
+          <span class="detail-value">${escapeHtml(exp.user_name)}</span>
         </div>` : ''}
         ${exp.reviewed_at ? `
         <div class="detail-item">
@@ -823,12 +823,12 @@ async function viewExpenseDetails(expenseId) {
       ${exp.description ? `
         <div class="detail-item">
           <span class="detail-label">Description</span>
-          <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;padding:12px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:4px;">${exp.description}</p>
+          <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;padding:12px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:4px;">${escapeHtml(exp.description)}</p>
         </div>` : ''}
       ${exp.manager_comment ? `
         <div style="padding:12px 16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius);margin-top:4px;">
           <span style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">💬 Manager Comment</span>
-          <p style="color:var(--text-secondary);font-size:14px;">${exp.manager_comment}</p>
+          <p style="color:var(--text-secondary);font-size:14px;">${escapeHtml(exp.manager_comment)}</p>
         </div>` : ''}
     `;
     document.getElementById('view-expense-modal').classList.remove('hidden');
