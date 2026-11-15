@@ -209,6 +209,11 @@ router.post('/', authenticate, upload.single('receipt'), async (req, res) => {
       return res.status(400).json({ error: 'Amount must be a positive number' });
     }
 
+    const expenseDate = new Date(`${date}T00:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(expenseDate.getTime()) || expenseDate.toISOString().slice(0, 10) !== date) {
+      return res.status(400).json({ error: 'Date must be a valid YYYY-MM-DD value' });
+    }
+
     const { data: expense, error } = await supabase
       .from('expenses')
       .insert([{
@@ -218,7 +223,7 @@ router.post('/', authenticate, upload.single('receipt'), async (req, res) => {
         amount: parseFloat(amount),
         currency: currency || 'INR',
         category,
-        date,
+        date: expenseDate.toISOString().slice(0, 10),
         description: description?.trim() || null,
         receipt_url: req.file ? `/uploads/${req.file.filename}` : null,
         status: 'pending',
@@ -238,7 +243,7 @@ router.post('/', authenticate, upload.single('receipt'), async (req, res) => {
         amount: parseFloat(amount),
         currency: currency || 'INR',
         category,
-        date,
+        date: expenseDate.toISOString().slice(0, 10),
         description: description?.trim() || null,
         receiptUrl: req.file ? `/uploads/${req.file.filename}` : null
       });
