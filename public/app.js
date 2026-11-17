@@ -26,6 +26,10 @@ const formatCurrency = (amount, currency = 'INR') => {
   }).format(amount);
 };
 
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+}[char]));
+
 const formatDate = (dateStr) => {
   if (!dateStr) return '—';
   return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -549,14 +553,14 @@ function renderExpensesTable(containerId, expenses, options = {}) {
       ${showEmployee ? `<td>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="user-avatar sm" style="font-size:10px;">${(exp.user_name || 'U').split(' ').map(n=>n[0]).join('').substring(0,2)}</div>
-          <span>${exp.user_name || '—'}</span>
+          <span>${escapeHtml(exp.user_name || '—')}</span>
         </div>
       </td>` : ''}
       <td>
-        <div style="font-weight:600;color:var(--text-primary);">${exp.title}</div>
-        ${exp.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${exp.description.substring(0, 50)}${exp.description.length > 50 ? '...' : ''}</div>` : ''}
+        <div style="font-weight:600;color:var(--text-primary);">${escapeHtml(exp.title)}</div>
+        ${exp.description ? `<div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${escapeHtml(exp.description.substring(0, 50))}${exp.description.length > 50 ? '...' : ''}</div>` : ''}
       </td>
-      <td><span style="font-size:12px;background:var(--bg-elevated);padding:3px 8px;border-radius:6px;color:var(--text-secondary);">${exp.category}</span></td>
+      <td><span style="font-size:12px;background:var(--bg-elevated);padding:3px 8px;border-radius:6px;color:var(--text-secondary);">${escapeHtml(exp.category)}</span></td>
       <td class="amount-cell">${formatCurrency(exp.amount, exp.currency)}</td>
       <td>${formatDate(exp.date)}</td>
       <td>${statusBadge(exp.status)}</td>
@@ -660,6 +664,13 @@ async function loadAllExpenses() {
 function handleFileSelect(event) {
   const file = event.target.files[0];
   const preview = document.getElementById('file-preview');
+  const maxFileSize = 5 * 1024 * 1024;
+  if (file && file.size > maxFileSize) {
+    event.target.value = '';
+    preview.classList.add('hidden');
+    toast('Receipt files must be 5 MB or smaller', 'warning');
+    return;
+  }
   if (file) {
     preview.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
     preview.classList.remove('hidden');
@@ -715,11 +726,11 @@ async function openReviewModal(expenseId) {
       <div class="expense-detail-grid">
         <div class="detail-item">
           <span class="detail-label">Title</span>
-          <span class="detail-value">${exp.title}</span>
+          <span class="detail-value">${escapeHtml(exp.title)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Submitted By</span>
-          <span class="detail-value">${exp.user_name || '—'}</span>
+          <span class="detail-value">${escapeHtml(exp.user_name || '—')}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Amount</span>
@@ -727,7 +738,7 @@ async function openReviewModal(expenseId) {
         </div>
         <div class="detail-item">
           <span class="detail-label">Category</span>
-          <span class="detail-value">${exp.category}</span>
+          <span class="detail-value">${escapeHtml(exp.category)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Date</span>
@@ -741,7 +752,7 @@ async function openReviewModal(expenseId) {
       ${exp.description ? `
         <div class="detail-item">
           <span class="detail-label">Description</span>
-          <span class="detail-value" style="color:var(--text-secondary);">${exp.description}</span>
+          <span class="detail-value" style="color:var(--text-secondary);">${escapeHtml(exp.description)}</span>
         </div>` : ''}
     `;
     document.getElementById('review-comment').value = '';
@@ -783,7 +794,7 @@ async function viewExpenseDetails(expenseId) {
       <div class="expense-detail-grid">
         <div class="detail-item">
           <span class="detail-label">Title</span>
-          <span class="detail-value">${exp.title}</span>
+          <span class="detail-value">${escapeHtml(exp.title)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Status</span>
@@ -795,7 +806,7 @@ async function viewExpenseDetails(expenseId) {
         </div>
         <div class="detail-item">
           <span class="detail-label">Category</span>
-          <span class="detail-value">${exp.category}</span>
+          <span class="detail-value">${escapeHtml(exp.category)}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Expense Date</span>
@@ -808,7 +819,7 @@ async function viewExpenseDetails(expenseId) {
         ${exp.user_name ? `
         <div class="detail-item">
           <span class="detail-label">Submitted By</span>
-          <span class="detail-value">${exp.user_name}</span>
+          <span class="detail-value">${escapeHtml(exp.user_name)}</span>
         </div>` : ''}
         ${exp.reviewed_at ? `
         <div class="detail-item">
@@ -819,12 +830,12 @@ async function viewExpenseDetails(expenseId) {
       ${exp.description ? `
         <div class="detail-item">
           <span class="detail-label">Description</span>
-          <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;padding:12px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:4px;">${exp.description}</p>
+          <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;padding:12px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:4px;">${escapeHtml(exp.description)}</p>
         </div>` : ''}
       ${exp.manager_comment ? `
         <div style="padding:12px 16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius);margin-top:4px;">
           <span style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;">💬 Manager Comment</span>
-          <p style="color:var(--text-secondary);font-size:14px;">${exp.manager_comment}</p>
+          <p style="color:var(--text-secondary);font-size:14px;">${escapeHtml(exp.manager_comment)}</p>
         </div>` : ''}
     `;
     document.getElementById('view-expense-modal').classList.remove('hidden');
